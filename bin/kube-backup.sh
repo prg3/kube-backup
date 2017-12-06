@@ -38,7 +38,7 @@ Usage:
     [--use-kubeconfig-from-secret|--kubeconfig-secret=<secret name>]
     [--slack-secret=<secret name>] [--slack-pretext=<text>]
     [--timestamp=<timestamp>] [--backup-name=<backup name>]
-    [--dry-run]
+    [--dry-run] [--first-pod]
   ${script_name} --help
   ${script_name} --version
 
@@ -50,6 +50,7 @@ Notes:
   --backup-name will replace e.g. the database name or file path
   --dry-run will do everything except the actual backup
   --slack-pretext may include links using the Slack '<url|text>' syntax
+  --first-pod will use the first container in the case where there are multiple matches for an app selector
 
 END
 }
@@ -580,6 +581,9 @@ case $i in
   DRY_RUN=true
   shift # past argument with no value
   ;;
+  --first-pod)
+  FIRST_POD=true
+  ;;
   --help)
   display_usage
   exit 0
@@ -671,8 +675,13 @@ if [[ -n "$SELECTOR" ]]; then
     POD="${POD_ARRAY[0]}"
   else
     if [[ "${#POD_ARRAY[@]}" -gt 1 ]]; then
-      echo "Selector matched multiple pods, must match only one pod or specify pod name"
-      exit 2
+      if [[ "${FIRST_POD}" ]] ; then
+        echo "Found multiple pods, but first-pod defined, backing up the first pod"
+        POD="${POD_ARRAY[0]}"
+      else
+        echo "Selector matched multiple pods, must match only one pod or specify pod name"
+        exit 2
+      fi
     else
       echo "Skipping task, no pods found with selector"
     fi

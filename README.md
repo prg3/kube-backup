@@ -50,7 +50,7 @@ Usage:
     [--use-kubeconfig-from-secret|--kubeconfig-secret=<secret name>]
     [--slack-secret=<secret name>]
     [--timestamp=<timestamp>] [--backup-name=<backup name>]
-    [--dry-run]
+    [--dry-run] [--first-pod]
   kube-backup.sh --help
   kube-backup.sh --version
 
