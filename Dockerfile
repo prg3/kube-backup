@@ -1,6 +1,6 @@
 FROM debian:jessie-slim
 
-ENV KUBE_LATEST_VERSION="v1.7.8"
+ENV KUBE_LATEST_VERSION="v1.9.3"
 RUN export DEBIAN_FRONTEND=noninteractive \
   && apt-get update -y \
   && apt-get install -y apt-utils gettext-base python curl unzip \
